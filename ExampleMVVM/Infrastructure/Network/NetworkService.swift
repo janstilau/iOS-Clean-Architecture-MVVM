@@ -75,9 +75,9 @@ public final class DefaultNetworkService {
                 completion(.success(data))
             }
         }
-    
+        
         logger.log(request: request)
-
+        
         return sessionDataTask
     }
     
@@ -123,7 +123,7 @@ public class DefaultNetworkSessionManager: NetworkSessionManager {
 
 public final class DefaultNetworkErrorLogger: NetworkErrorLogger {
     public init() { }
-
+    
     public func log(request: URLRequest) {
         print("-------------")
         print("request: \(request.url!)")
@@ -135,14 +135,14 @@ public final class DefaultNetworkErrorLogger: NetworkErrorLogger {
             printIfDebug("body: \(String(describing: resultString))")
         }
     }
-
+    
     public func log(responseData data: Data?, response: URLResponse?) {
         guard let data = data else { return }
         if let dataDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             printIfDebug("responseData: \(String(describing: dataDict))")
         }
     }
-
+    
     public func log(error: Error) {
         printIfDebug("\(error)")
     }
@@ -175,7 +175,7 @@ extension Dictionary where Key == String {
 }
 
 func printIfDebug(_ string: String) {
-    #if DEBUG
+#if DEBUG
     print(string)
-    #endif
+#endif
 }

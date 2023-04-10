@@ -86,13 +86,13 @@ enum RequestGenerationError: Error {
 extension Requestable {
     
     func url(with config: NetworkConfigurable) throws -> URL {
-
+        
         let baseURL = config.baseURL.absoluteString.last != "/" ? config.baseURL.absoluteString + "/" : config.baseURL.absoluteString
         let endpoint = isFullPath ? path : baseURL.appending(path)
         
         guard var urlComponents = URLComponents(string: endpoint) else { throw RequestGenerationError.components }
         var urlQueryItems = [URLQueryItem]()
-
+        
         let queryParameters = try queryParametersEncodable?.toDictionary() ?? self.queryParameters
         queryParameters.forEach {
             urlQueryItems.append(URLQueryItem(name: $0.key, value: "\($0.value)"))
@@ -111,7 +111,7 @@ extension Requestable {
         var urlRequest = URLRequest(url: url)
         var allHeaders: [String: String] = config.headers
         headerParamaters.forEach { allHeaders.updateValue($1, forKey: $0) }
-
+        
         let bodyParamaters = try bodyParamatersEncodable?.toDictionary() ?? self.bodyParamaters
         if !bodyParamaters.isEmpty {
             urlRequest.httpBody = encodeBody(bodyParamaters: bodyParamaters, bodyEncoding: bodyEncoding)
