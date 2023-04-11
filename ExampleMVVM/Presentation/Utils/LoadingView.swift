@@ -7,10 +7,11 @@
 
 import UIKit
 
+// 一个全局 Loading 实现.
 public class LoadingView {
-
+    
     internal static var spinner: UIActivityIndicatorView?
-
+    
     public static func show() {
         DispatchQueue.main.async {
             NotificationCenter.default.addObserver(self, selector: #selector(update), name: UIDevice.orientationDidChangeNotification, object: nil)
@@ -20,13 +21,13 @@ public class LoadingView {
                 spinner.backgroundColor = UIColor.black.withAlphaComponent(0.2)
                 spinner.style = .whiteLarge
                 window.addSubview(spinner)
-
+                
                 spinner.startAnimating()
                 self.spinner = spinner
             }
         }
     }
-
+    
     public static func hide() {
         DispatchQueue.main.async {
             guard let spinner = spinner else { return }
@@ -35,7 +36,7 @@ public class LoadingView {
             self.spinner = nil
         }
     }
-
+    
     @objc public static func update() {
         DispatchQueue.main.async {
             if spinner != nil {

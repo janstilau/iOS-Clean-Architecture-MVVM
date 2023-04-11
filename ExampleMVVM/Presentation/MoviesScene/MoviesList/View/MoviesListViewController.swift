@@ -9,7 +9,7 @@ import UIKit
 
 final class MoviesListViewController: UIViewController, StoryboardInstantiable, Alertable {
     
-    // Xib 里面, 不做太多的细节 UI 的构建, 仅仅是做 Container View 的简单布局. 
+    // Xib 里面, 不做太多的细节 UI 的构建, 仅仅是做 Container View 的简单布局.
     @IBOutlet private var contentView: UIView!
     @IBOutlet private var moviesListContainer: UIView!
     @IBOutlet private(set) var suggestionsListContainer: UIView!
@@ -41,6 +41,11 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
     
     private func bind(to viewModel: MoviesListViewModel) {
+        /*
+         ViewModel 要有一个机制, 在自身的数据发生改变之后, 来触发 View 层的变化.
+         这套机制, 使用 Observable 来解决了.
+         VC 里面, 定义各个数据信号发射之后, 应该出发的 Update 方法. 这样, View 就和 数据绑定了, 可以自动进行更新. 
+         */
         viewModel.items.observe(on: self) { [weak self] _ in self?.updateItems() }
         viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
         viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
@@ -64,6 +69,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     // MARK: - Private
     
     private func setupViews() {
+        // ViewModel 直接返回 View 应该展示的数据.
         title = viewModel.screenTitle
         emptyDataLabel.text = viewModel.emptyDataTitle
         setupSearchController()
@@ -128,6 +134,8 @@ extension MoviesListViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
         searchController.searchBar.autoresizingMask = [.flexibleWidth]
+        // ViewController 里面, 要做 View 的创建和放置
+        // 接受 ViewAction, 来触发 ViewModel 里面的 ModelAction.
         searchBarContainer.addSubview(searchController.searchBar)
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
@@ -136,6 +144,7 @@ extension MoviesListViewController {
     }
 }
 
+// ViewController 里面, 要在对应的 ViewAction 中, 来触发 ViewModel 的 ModelAction.
 extension MoviesListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, !searchText.isEmpty else { return }
