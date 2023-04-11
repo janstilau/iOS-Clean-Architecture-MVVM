@@ -62,6 +62,7 @@ extension MoviesListTableViewController {
         cell.fill(with: viewModel.items.value[indexPath.row],
                   posterImagesRepository: posterImagesRepository)
         
+        // 非常丑陋的实现, 居然用这种方式, 来触发 ViewModel 的 Action.
         if indexPath.row == viewModel.items.value.count - 1 {
             viewModel.didLoadNextPage()
         }

@@ -9,6 +9,7 @@ import Foundation
 
 final class DefaultPosterImagesRepository {
     
+    // 真正的网络请求, 也是通过 Service 抽象接口发送的.
     private let dataTransferService: DataTransferService
 
     init(dataTransferService: DataTransferService) {
@@ -18,6 +19,7 @@ final class DefaultPosterImagesRepository {
 
 extension DefaultPosterImagesRepository: PosterImagesRepository {
     
+    // 真实的场景, 是发送了一个网络请求, 来获取图片的资源.
     func fetchImage(with imagePath: String, width: Int, completion: @escaping (Result<Data, Error>) -> Void) -> Cancellable? {
         
         let endpoint = APIEndpoints.getMoviePoster(path: imagePath, width: width)

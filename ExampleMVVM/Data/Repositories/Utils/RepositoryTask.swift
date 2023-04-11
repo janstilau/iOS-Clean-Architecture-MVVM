@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 一个包装盒子, 里面存放真正的 DataTask. 
 class RepositoryTask: Cancellable {
     var networkTask: NetworkCancellable?
     var isCancelled: Bool = false

@@ -8,6 +8,40 @@
 import Foundation
 import CoreData
 
+/*
+ extension MoviesResponseEntity {
+
+     @nonobjc public class func fetchRequest() -> NSFetchRequest<MoviesResponseEntity> {
+         return NSFetchRequest<MoviesResponseEntity>(entityName: "MoviesResponseEntity")
+     }
+
+     @NSManaged public var page: Int32
+     @NSManaged public var totalPages: Int32
+     @NSManaged public var movies: NSSet?
+     @NSManaged public var request: MoviesRequestEntity?
+
+ }
+
+ // MARK: Generated accessors for movies
+ extension MoviesResponseEntity {
+
+     @objc(addMoviesObject:)
+     @NSManaged public func addToMovies(_ value: MovieResponseEntity)
+
+     @objc(removeMoviesObject:)
+     @NSManaged public func removeFromMovies(_ value: MovieResponseEntity)
+
+     @objc(addMovies:)
+     @NSManaged public func addToMovies(_ values: NSSet)
+
+     @objc(removeMovies:)
+     @NSManaged public func removeFromMovies(_ values: NSSet)
+
+ }
+
+ */
+
+// 定义各种映射函数, 将数据库中的数据, 变为业务数据.
 extension MoviesResponseEntity {
     func toDTO() -> MoviesResponseDTO {
         return .init(page: Int(page),

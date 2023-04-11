@@ -41,6 +41,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     // MARK: - Private
 
     private func setupViews() {
+        // View 的更新, 直接从 ViewModel 里面获取对应的数据. 
         title = viewModel.title
         overviewTextView.text = viewModel.overview
         posterImageView.isHidden = viewModel.isPosterImageHidden

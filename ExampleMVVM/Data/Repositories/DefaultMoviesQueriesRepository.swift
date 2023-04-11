@@ -9,6 +9,7 @@ import Foundation
 
 final class DefaultMoviesQueriesRepository {
     
+    // 这个 dataTransferService 是一个废属性, 没有真的有使用的地方 .
     private let dataTransferService: DataTransferService
     private var moviesQueriesPersistentStorage: MoviesQueriesStorage
     
@@ -19,6 +20,13 @@ final class DefaultMoviesQueriesRepository {
     }
 }
 
+/*
+ MoviesQueriesStorage
+ MoviesQueriesRepository
+ 这两个是完全一样的. 不明白作者为什么这样设计.
+ 
+ 目前来看, 还是将真正的实现, 代理给了 MoviesQueriesStorage 接口对象. 
+ */
 extension DefaultMoviesQueriesRepository: MoviesQueriesRepository {
     
     func fetchRecentsQueries(maxCount: Int, completion: @escaping (Result<[MovieQuery], Error>) -> Void) {

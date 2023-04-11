@@ -8,6 +8,8 @@
 import Foundation
 import CoreData
 
+// 使用数据库完成 MoviesQueriesStorage 的实现.
+// 使用 UserDefault, 使用数据库, 都是完成接口对象的实现. 使用者并不关心实际的对象类型.
 final class CoreDataMoviesQueriesStorage {
 
     private let maxStorageLimit: Int
@@ -26,11 +28,13 @@ extension CoreDataMoviesQueriesStorage: MoviesQueriesStorage {
         coreDataStorage.performBackgroundTask { context in
             do {
                 let request: NSFetchRequest = MovieQueryEntity.fetchRequest()
-                request.sortDescriptors = [NSSortDescriptor(key: #keyPath(MovieQueryEntity.createdAt),
-                                                            ascending: false)]
+                request.sortDescriptors = [
+                    NSSortDescriptor(key: #keyPath(MovieQueryEntity.createdAt),
+                                     ascending: false)]
                 request.fetchLimit = maxCount
                 let result = try context.fetch(request).map { $0.toDomain() }
 
+                // 上面是查询, 下面是查询处理, 在合适的位置插入空行.
                 completion(.success(result))
             } catch {
                 completion(.failure(CoreDataStorageError.readError(error)))
@@ -57,7 +61,7 @@ extension CoreDataMoviesQueriesStorage: MoviesQueriesStorage {
 
 // MARK: - Private
 extension CoreDataMoviesQueriesStorage {
-
+    // 这里的逻辑, 和 UserDefault 完全一致. 
     private func cleanUpQueries(for query: MovieQuery, inContext context: NSManagedObjectContext) throws {
         let request: NSFetchRequest = MovieQueryEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(MovieQueryEntity.createdAt),

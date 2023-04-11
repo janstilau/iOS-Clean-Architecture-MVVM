@@ -18,11 +18,16 @@ public protocol DataTransferService {
     typealias CompletionHandler<T> = (Result<T, DataTransferError>) -> Void
     
     @discardableResult
-    func request<T: Decodable, E: ResponseRequestable>(with endpoint: E,
-                                                       completion: @escaping CompletionHandler<T>) -> NetworkCancellable? where E.Response == T
+    func request<T: Decodable, E: ResponseRequestable>(
+        with endpoint: E,
+        completion: @escaping CompletionHandler<T>)
+    -> NetworkCancellable? where E.Response == T
+    
     @discardableResult
-    func request<E: ResponseRequestable>(with endpoint: E,
-                                         completion: @escaping CompletionHandler<Void>) -> NetworkCancellable? where E.Response == Void
+    func request<E: ResponseRequestable>(
+        with endpoint: E,
+        completion: @escaping CompletionHandler<Void>)
+    -> NetworkCancellable? where E.Response == Void
 }
 
 public protocol DataTransferErrorResolver {

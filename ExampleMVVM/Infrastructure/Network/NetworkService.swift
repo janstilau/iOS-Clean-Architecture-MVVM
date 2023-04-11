@@ -7,11 +7,17 @@
 
 import Foundation
 
+// 使用 Enum 来表示 Error, 这是非常常见的一种表示方式. 
 public enum NetworkError: Error {
+    // 真的发送了请求, 但是失败了
     case error(statusCode: Int, data: Data?)
+    // 没网
     case notConnected
+    // 主动 Cancel 了
     case cancelled
+    // 未知错误, Default 处理.
     case generic(Error)
+    // URL 生成错误.
     case urlGeneration
 }
 
@@ -81,6 +87,7 @@ public final class DefaultNetworkService {
         return sessionDataTask
     }
     
+    // 有了 generic 这个类型, 自己定义的错误, 基本上就可以包含所有的错误了.
     private func resolve(error: Error) -> NetworkError {
         let code = URLError.Code(rawValue: (error as NSError).code)
         switch code {
@@ -109,6 +116,7 @@ extension DefaultNetworkService: NetworkService {
 // for example, Alamofire SessionManager with its RequestAdapter and RequestRetrier.
 // And it can be incjected into NetworkService instead of default one.
 
+// 真正发送网络请求的部分.
 public class DefaultNetworkSessionManager: NetworkSessionManager {
     public init() {}
     public func request(_ request: URLRequest,
@@ -121,6 +129,7 @@ public class DefaultNetworkSessionManager: NetworkSessionManager {
 
 // MARK: - Logger
 
+// NetworkErrorLogger, 这样的一个接口对象安插在运转逻辑中, 给了外界自定义的机会.
 public final class DefaultNetworkErrorLogger: NetworkErrorLogger {
     public init() { }
     
@@ -162,6 +171,7 @@ extension NetworkError {
     }
 }
 
+// 这是一个更好的打印方式, 应该纳入到自己的项目里面. 
 extension Dictionary where Key == String {
     func prettyPrint() -> String {
         var string: String = ""
@@ -174,6 +184,7 @@ extension Dictionary where Key == String {
     }
 }
 
+// 在 Debug 环境下才进行打印.
 func printIfDebug(_ string: String) {
 #if DEBUG
     print(string)

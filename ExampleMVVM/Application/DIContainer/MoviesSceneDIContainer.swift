@@ -59,8 +59,9 @@ final class MoviesSceneDIContainer {
     }
     
     func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
-        return DefaultMoviesListViewModel(searchMoviesUseCase: makeSearchMoviesUseCase(),
-                                          actions: actions)
+        return DefaultMoviesListViewModel(
+            searchMoviesUseCase: makeSearchMoviesUseCase(),
+            actions: actions)
     }
     
     // MARK: - Movie Details
@@ -74,8 +75,10 @@ final class MoviesSceneDIContainer {
     }
     
     // MARK: - Movies Queries Suggestions List
-    func makeMoviesQueriesSuggestionsListViewController(didSelect: @escaping MoviesQueryListViewModelDidSelectAction) -> UIViewController {
+    func makeMoviesQueriesSuggestionsListViewController(
+        didSelect: @escaping MoviesQueryListViewModelDidSelectAction) -> UIViewController {
         if #available(iOS 13.0, *) { // SwiftUI
+            // 使用 SwfitUI, 其实是可以在 UIKit 里面共同使用的. 
             let view = MoviesQueryListView(viewModelWrapper: makeMoviesQueryListViewModelWrapper(didSelect: didSelect))
             return UIHostingController(rootView: view)
         } else { // UIKit

@@ -13,6 +13,7 @@ enum CoreDataStorageError: Error {
     case deleteError(Error)
 }
 
+// // CoreData 的实现细节, 不看.
 final class CoreDataStorage {
 
     static let shared = CoreDataStorage()

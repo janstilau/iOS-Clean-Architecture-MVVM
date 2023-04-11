@@ -19,11 +19,15 @@ public final class Observable<Value> {
     struct Observer<Value> {
         // 这里的 Observer 唯一的作用, 就是 Remove 的时候.
         weak var observer: AnyObject?
+        // 存储的闭包, 接受值是 Value 类型
+        // 这其实也是引到使用者, 在传递的闭包里面, 使用 Block 的参数来获取值, 而不是直接对于 Value 进行读取.
         let block: (Value) -> Void
     }
     
     private var observers = [Observer<Value>]()
     
+    // 我会对于这个属性进行改造, 所有的行为, 必须使用 update 类似的函数进行更新.
+    // 这个值, 变为私有属性, 暴露出一个计算属性来进行读取. 
     public var value: Value {
         didSet { notifyObservers() }
     }

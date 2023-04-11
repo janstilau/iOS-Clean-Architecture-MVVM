@@ -13,8 +13,9 @@ protocol MovieDetailsViewModelInput {
 }
 
 protocol MovieDetailsViewModelOutput {
-    var title: String { get }
     var posterImage: Observable<Data?> { get }
+    
+    var title: String { get }
     var isPosterImageHidden: Bool { get }
     var overview: String { get }
 }
@@ -25,11 +26,14 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     
     private let posterImagePath: String?
     private let posterImagesRepository: PosterImagesRepository
+    // 在这个项目里面, 所有的异步动作, 都有着取消机制.
+    // 这是一个好的设计. 
     private var imageLoadTask: Cancellable? { willSet { imageLoadTask?.cancel() } }
-
+    
     // MARK: - OUTPUT
-    let title: String
     let posterImage: Observable<Data?> = Observable(nil)
+    
+    let title: String
     let isPosterImageHidden: Bool
     let overview: String
     
@@ -48,8 +52,9 @@ extension DefaultMovieDetailsViewModel {
     
     func updatePosterImage(width: Int) {
         guard let posterImagePath = posterImagePath else { return }
-
-        imageLoadTask = posterImagesRepository.fetchImage(with: posterImagePath, width: width) { result in
+        
+        imageLoadTask = posterImagesRepository.fetchImage(with: posterImagePath,
+                                                          width: width) { result in
             guard self.posterImagePath == posterImagePath else { return }
             switch result {
             case .success(let data):

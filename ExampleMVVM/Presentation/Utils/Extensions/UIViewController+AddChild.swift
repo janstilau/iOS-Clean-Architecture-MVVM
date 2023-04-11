@@ -9,6 +9,7 @@ import UIKit
 
 extension UIViewController {
     
+    // 这是一个通用的写法. 可以移植到自己的项目中.
     func add(child: UIViewController, container: UIView) {
         addChild(child)
         child.view.frame = container.bounds
@@ -16,6 +17,7 @@ extension UIViewController {
         child.didMove(toParent: self)
     }
     
+    // 这是一个通用的写法, 可以移植到自己的项目中. 
     func remove() {
         guard parent != nil else {
             return
