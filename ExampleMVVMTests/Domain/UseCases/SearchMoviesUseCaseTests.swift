@@ -22,6 +22,7 @@ class SearchMoviesUseCaseTests: XCTestCase {
         case failedFetching
     }
     
+    // 在 Test 工程里面, 使用 Mock 对象, 来完成对于协议真正的处理.
     class MoviesQueriesRepositoryMock: MoviesQueriesRepository {
         var recentQueries: [MovieQuery] = []
         
@@ -32,6 +33,8 @@ class SearchMoviesUseCaseTests: XCTestCase {
             recentQueries.append(query)
         }
     }
+    
+    // 在 Test 工程里面, 使用 Mock 对象, 来完成自定义数据的操作者.
     
     struct MoviesRepositoryMock: MoviesRepository {
         var result: Result<MoviesPage, Error>
@@ -44,7 +47,10 @@ class SearchMoviesUseCaseTests: XCTestCase {
     func testSearchMoviesUseCase_whenSuccessfullyFetchesMoviesForQuery_thenQueryIsSavedInRecentQueries() {
         // given
         let expectation = self.expectation(description: "Recent query saved")
+        // The number of times fulfill() must be called before the expectation is completely fulfilled.
+        // 原来还有这个值.
         expectation.expectedFulfillmentCount = 2
+        
         let moviesQueriesRepository = MoviesQueriesRepositoryMock()
         let useCase = DefaultSearchMoviesUseCase(moviesRepository: MoviesRepositoryMock(result: .success(SearchMoviesUseCaseTests.moviesPages[0])),
                                                  moviesQueriesRepository: moviesQueriesRepository)
