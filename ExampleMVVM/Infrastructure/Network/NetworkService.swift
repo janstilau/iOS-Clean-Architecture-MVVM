@@ -28,6 +28,7 @@ public protocol NetworkCancellable {
 extension URLSessionTask: NetworkCancellable { }
 
 public protocol NetworkService {
+    
     typealias CompletionHandler = (Result<Data?, NetworkError>) -> Void
     
     func request(endpoint: Requestable, completion: @escaping CompletionHandler) -> NetworkCancellable?
@@ -50,9 +51,9 @@ public protocol NetworkErrorLogger {
 
 public final class DefaultNetworkService {
     
-    private let config: NetworkConfigurable
-    private let sessionManager: NetworkSessionManager
-    private let logger: NetworkErrorLogger
+    private let config: NetworkConfigurable // Session 相关的一些设置.
+    private let sessionManager: NetworkSessionManager // 真正的发送网络请求的部分
+    private let logger: NetworkErrorLogger // Logger
     
     public init(config: NetworkConfigurable,
                 sessionManager: NetworkSessionManager = DefaultNetworkSessionManager(),
@@ -62,8 +63,11 @@ public final class DefaultNetworkService {
         self.logger = logger
     }
     
-    private func request(request: URLRequest, completion: @escaping CompletionHandler) -> NetworkCancellable {
+    private func request(
+        request: URLRequest,
+        completion: @escaping CompletionHandler) -> NetworkCancellable {
         
+            // 通过 sessionManager 发送真正的网络请求, 然后在回调里面, 进行解析. 
         let sessionDataTask = sessionManager.request(request) { data, response, requestError in
             
             if let requestError = requestError {
@@ -110,6 +114,11 @@ extension DefaultNetworkService: NetworkService {
         }
     }
 }
+
+
+
+
+
 
 // MARK: - Default Network Session Manager
 // Note: If authorization is needed NetworkSessionManager can be implemented by using,

@@ -23,9 +23,10 @@ class DataTransferServiceTests: XCTestCase {
         let expectation = self.expectation(description: "Should decode mock object")
         
         let responseData = #"{"name": "Hello"}"#.data(using: .utf8)
-        let networkService = DefaultNetworkService(config: config, sessionManager: NetworkSessionManagerMock(response: nil,
-                                                                                                             data: responseData,
-                                                                                                             error: nil))
+        let networkService = DefaultNetworkService(
+            config: config,
+            sessionManager:
+                NetworkSessionManagerMock(response: nil, data: responseData, error: nil))
         
         let sut = DefaultDataTransferService(with: networkService)
         //when

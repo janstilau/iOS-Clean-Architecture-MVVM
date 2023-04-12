@@ -14,8 +14,8 @@ import Foundation
 // 实现类可以写很多方法, 根据场景的不同, 不能够完全的限制方法的可见性, 这个时候, 其他地方只知道协议对象, 那么这种暴露也就无妨了. 
 public protocol NetworkConfigurable {
     var baseURL: URL { get }
-    var headers: [String: String] { get }
-    var queryParameters: [String: String] { get }
+    var headers: [String: String] { get } // 默认的一些 Header 值
+    var queryParameters: [String: String] { get } // 默认的一些 Query 值. 
 }
 
 public struct ApiDataNetworkConfig: NetworkConfigurable {

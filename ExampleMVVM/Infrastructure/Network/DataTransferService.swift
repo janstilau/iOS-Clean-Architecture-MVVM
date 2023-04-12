@@ -7,6 +7,11 @@
 
 import Foundation
 
+/*
+ 这种, Error 套 Error 的场景非常常见.
+ case 的用途是分类, 真正的 Error 是什么, 根本不关心.
+ 所以, Error 本质上, 可以算作是一个 Any 类型.
+ */
 public enum DataTransferError: Error {
     case noResponse
     case parsing(Error)
@@ -45,23 +50,29 @@ public protocol DataTransferErrorLogger {
 public final class DefaultDataTransferService {
     
     private let networkService: NetworkService
+    
     private let errorResolver: DataTransferErrorResolver
+    
     private let errorLogger: DataTransferErrorLogger
     
-    public init(with networkService: NetworkService,
-                errorResolver: DataTransferErrorResolver = DefaultDataTransferErrorResolver(),
-                errorLogger: DataTransferErrorLogger = DefaultDataTransferErrorLogger()) {
-        self.networkService = networkService
-        self.errorResolver = errorResolver
-        self.errorLogger = errorLogger
-    }
+    public init(
+        with networkService: NetworkService,
+        errorResolver: DataTransferErrorResolver = DefaultDataTransferErrorResolver(),
+        errorLogger: DataTransferErrorLogger = DefaultDataTransferErrorLogger()) {
+            self.networkService = networkService
+            self.errorResolver = errorResolver
+            self.errorLogger = errorLogger
+        }
 }
 
 extension DefaultDataTransferService: DataTransferService {
     
-    public func request<T: Decodable, E: ResponseRequestable>(with endpoint: E,
-                                                              completion: @escaping CompletionHandler<T>) -> NetworkCancellable? where E.Response == T {
-        
+    // 实际上, T 的类型, 是由 ResponseRequestable 来确定的.
+    public func request<T: Decodable, E: ResponseRequestable>(
+        with endpoint: E,
+        completion: @escaping CompletionHandler<T>)
+    -> NetworkCancellable? where E.Response == T {
+        // networkService 是做真正的网络请求, 但是解析成为具体的 Model. 是在这一层.
         return self.networkService.request(endpoint: endpoint) { result in
             switch result {
             case .success(let data):
@@ -75,6 +86,8 @@ extension DefaultDataTransferService: DataTransferService {
         }
     }
     
+    // 不需要解析, 因为 T 的类型是 Void.
+    // 专门特化处理.
     public func request<E>(with endpoint: E, completion: @escaping CompletionHandler<Void>) -> NetworkCancellable? where E : ResponseRequestable, E.Response == Void {
         return self.networkService.request(endpoint: endpoint) { result in
             switch result {
@@ -89,6 +102,9 @@ extension DefaultDataTransferService: DataTransferService {
     }
     
     // MARK: - Private
+    
+    // ResponseDecoder 不是一个泛型类型, 是里面的方法是一个泛型方法.
+    // 所以可以直接进行类型的传递. 
     private func decode<T: Decodable>(data: Data?, decoder: ResponseDecoder) -> Result<T, DataTransferError> {
         do {
             guard let data = data else { return .failure(.noResponse) }

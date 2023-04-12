@@ -7,6 +7,8 @@
 
 import Foundation
 
+// NetworkSessionManager 的能力, 就是可以发送 URLRequest, 获取 Result Data
+// Mock 类可以进行值的预先确定. 
 struct NetworkSessionManagerMock: NetworkSessionManager {
     let response: HTTPURLResponse?
     let data: Data?

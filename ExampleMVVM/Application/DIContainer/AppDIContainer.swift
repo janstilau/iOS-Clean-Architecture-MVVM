@@ -9,6 +9,10 @@ import Foundation
 
 final class AppDIContainer {
     
+/*
+ 对于这种常量的管理, 没有必要一定就是静态属性.
+ 创建对象之后, 读取属性也是可以的.
+ */
     lazy var appConfiguration = AppConfiguration()
     
     // MARK: - Network
@@ -18,6 +22,7 @@ final class AppDIContainer {
             queryParameters: [
                 "api_key": appConfiguration.apiKey,
                 "language": NSLocale.preferredLanguages.first ?? "en"])
+        
         let apiDataNetwork = DefaultNetworkService(config: config)
         return DefaultDataTransferService(with: apiDataNetwork)
     }()
