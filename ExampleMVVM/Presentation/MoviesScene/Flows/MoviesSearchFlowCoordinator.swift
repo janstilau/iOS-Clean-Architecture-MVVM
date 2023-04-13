@@ -17,10 +17,10 @@ final class MoviesSearchFlowCoordinator {
     
     private weak var navigationController: UINavigationController?
     private let dependencies: MoviesSearchFlowCoordinatorDependencies
-
+    
     private weak var moviesListVC: MoviesListViewController?
     private weak var moviesQueriesSuggestionsVC: UIViewController?
-
+    
     // 一些都是接口对象.
     // 一些都是通过初始化方法注入进来的. 
     init(navigationController: UINavigationController,
@@ -43,29 +43,29 @@ final class MoviesSearchFlowCoordinator {
             closeMovieQueriesSuggestions: closeMovieQueriesSuggestions
         )
         let vc = dependencies.makeMoviesListViewController(actions: actions)
-
+        
         navigationController?.pushViewController(vc, animated: false)
         moviesListVC = vc
     }
-
+    
     private func showMovieDetails(movie: Movie) {
         let vc = dependencies.makeMoviesDetailsViewController(movie: movie)
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
     // didSelect 是一个动词.
     // 对于函数对象来说, 使用动词进行命名是一个非常好的习惯. 
     private func showMovieQueriesSuggestions(didSelect: @escaping (MovieQuery) -> Void) {
         guard let moviesListViewController = moviesListVC,
-                moviesQueriesSuggestionsVC == nil,
-                let container = moviesListViewController.suggestionsListContainer else { return }
-
+              moviesQueriesSuggestionsVC == nil,
+              let container = moviesListViewController.suggestionsListContainer else { return }
+        
         let vc = dependencies.makeMoviesQueriesSuggestionsListViewController(didSelect: didSelect)
         moviesListViewController.add(child: vc, container: container)
         moviesQueriesSuggestionsVC = vc
         container.isHidden = false
     }
-
+    
     private func closeMovieQueriesSuggestions() {
         moviesQueriesSuggestionsVC?.remove()
         moviesQueriesSuggestionsVC = nil

@@ -20,7 +20,7 @@ final class MoviesListItemCell: UITableViewCell {
     private var viewModel: MoviesListItemViewModel!
     private var imageLoadTask: Cancellable? { willSet { imageLoadTask?.cancel() } }
     
-    // 这是一个类似于 KingFisher 的工具对象. 
+    // 这是一个类似于 KingFisher 的工具对象.
     private var posterImagesRepository: PosterImagesRepository?
     
     func fill(with viewModel: MoviesListItemViewModel, posterImagesRepository: PosterImagesRepository?) {

@@ -33,11 +33,8 @@ protocol MoviesListViewModelInput {
     func didSelectItem(at index: Int)
 }
 
-/*
- 对于 ViewModel 的 Output 来说, 除了最基本的, View 层可以直接使用的各个 View 相关的属性外.
- 暴露一些事件对象出去也是非常重要.
- 这样可以帮助 ViewController 层进行 Model 到 View 的更新映射.
- */
+// 显式地, 将可以发送信号的属性, 和仅仅作为显示的属性区分开还是很重要的.
+// 所有的 Model 操作, 都是通过 Model Action. 而不是直接的属性赋值.
 protocol MoviesListViewModelOutput {
     var items: Observable<[MoviesListItemViewModel]> { get } /// Also we can calculate view model items on demand:  https://github.com/kudoleh/iOS-Clean-Architecture-MVVM/pull/10/files
     var loading: Observable<MoviesListViewModelLoading?> { get }
@@ -62,6 +59,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let searchMoviesUseCase: SearchMoviesUseCase
     private let actions: MoviesListViewModelActions?
     
+    // 使用接口的好处, 这些所有的实现细节, 在使用者那里其实是不可见的.
     var currentPage: Int = 0
     var totalPageCount: Int = 1
     var hasMorePages: Bool { currentPage < totalPageCount }
@@ -77,6 +75,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     let loading: Observable<MoviesListViewModelLoading?> = Observable(.none)
     let query: Observable<String> = Observable("")
     let error: Observable<String> = Observable("")
+    
     var isEmpty: Bool { return items.value.isEmpty }
     let screenTitle = NSLocalizedString("Movies", comment: "")
     let emptyDataTitle = NSLocalizedString("Search results", comment: "")
@@ -158,7 +157,8 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
 }
 
 // MARK: - INPUT. View event methods
-
+// 将, 对外暴露的接口函数, 和自己内部运行的逻辑函数进行区分还是很重要的.
+// 在这些接口函数里面, 不做主要的逻辑运转, 而是调用逻辑函数. 这样, 逻辑函数更容易复用. 避免接口函数里面的代码太复杂. 
 extension DefaultMoviesListViewModel {
     
     func viewDidLoad() { }

@@ -13,10 +13,13 @@ import UIKit
 
 protocol ViewControllerLifecycleBehavior {
     func viewDidLoad(viewController: UIViewController)
+    
     func viewWillAppear(viewController: UIViewController)
     func viewDidAppear(viewController: UIViewController)
+    
     func viewWillDisappear(viewController: UIViewController)
     func viewDidDisappear(viewController: UIViewController)
+    
     func viewWillLayoutSubviews(viewController: UIViewController)
     func viewDidLayoutSubviews(viewController: UIViewController)
 }
@@ -40,11 +43,15 @@ extension UIViewController {
 
      - parameter behaviors: Behaviors to be added.
      */
+    
+    // 一个接口对象, 用来 Hook 住宿主环境的各个行为.
+    // 原理就是找一个子 ViewControlller. 通过这个 Dummy VC 来完成 Hook 的行为.
     func addBehaviors(_ behaviors: [ViewControllerLifecycleBehavior]) {
         let behaviorViewController = LifecycleBehaviorViewController(behaviors: behaviors)
 
         addChild(behaviorViewController)
         view.addSubview(behaviorViewController.view)
+        // 这里最好是 Hidden, 免得出什么幺蛾子. 
         behaviorViewController.didMove(toParent: self)
     }
 
@@ -55,7 +62,6 @@ extension UIViewController {
 
         init(behaviors: [ViewControllerLifecycleBehavior]) {
             self.behaviors = behaviors
-
             super.init(nibName: nil, bundle: nil)
         }
 
