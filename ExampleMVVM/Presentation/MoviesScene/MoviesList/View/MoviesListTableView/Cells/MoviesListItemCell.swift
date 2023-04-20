@@ -23,6 +23,8 @@ final class MoviesListItemCell: UITableViewCell {
     // 这是一个类似于 KingFisher 的工具对象.
     private var posterImagesRepository: PosterImagesRepository?
     
+    
+    // 这是一个全刷新的函数, 对于最终没有 ViewAction 的控件来说, 直接一次性刷新就好了. 
     func fill(with viewModel: MoviesListItemViewModel, posterImagesRepository: PosterImagesRepository?) {
         self.viewModel = viewModel
         self.posterImagesRepository = posterImagesRepository

@@ -21,10 +21,15 @@ final class MoviesListTableViewController: UITableViewController {
         setupViews()
     }
     
+    /*
+     这与其说是一个 VC, 不如说是一个 View. VM 信号发出, 主 VC 进行信号的处理, 然后主动调用自己管理 View 的相关 Update 函数. 
+     */
+    
     func reload() {
         tableView.reloadData()
     }
     
+    // 这是外界触发的. VM 的
     func updateLoading(_ loading: MoviesListViewModelLoading?) {
         switch loading {
         case .nextPage:

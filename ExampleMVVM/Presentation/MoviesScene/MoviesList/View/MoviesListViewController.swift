@@ -46,8 +46,14 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
          这套机制, 使用 Observable 来解决了.
          VC 里面, 定义各个数据信号发射之后, 应该出发的 Update 方法. 这样, View 就和 数据绑定了, 可以自动进行更新. 
          */
+        // 相比于原本的一个 UpdateViews, 使用响应式可以使得 View 的变化更加的可控. 相关数据变化之后, 引发对应的 View 变化.
+        // 之前的 Update, 为了性能在数据变化之后, 主动地调用了 Update. 使用 VM 之后, 就变为了数据变化自动触发.
+        
+        // 内容
         viewModel.items.observe(on: self) { [weak self] _ in self?.updateItems() }
+        // Loading
         viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
+        // Query.
         viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
         viewModel.error.observe(on: self) { [weak self] in self?.showError($0) }
     }
@@ -80,6 +86,11 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
                       BlackStyleNavigationBarBehavior()])
     }
     
+    
+    /*
+     各种相关的 Update, 也是在 VC 的各自 Update 函数里面, 不将各种 Update 的逻辑, 写到 Bind 函数里面
+     Bind 函数, 还是一个分发函数, 而不是一个业务函数.
+     */
     private func updateItems() {
         moviesTableViewController?.reload()
     }
@@ -149,6 +160,7 @@ extension MoviesListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, !searchText.isEmpty else { return }
         searchController.isActive = false
+        // View Action, 触发 ViewModel 的相关操作. 
         viewModel.didSearch(query: searchText)
     }
     

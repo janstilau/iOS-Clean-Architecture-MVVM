@@ -76,6 +76,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     let query: Observable<String> = Observable("")
     let error: Observable<String> = Observable("")
     
+    // VM 里面, 将 View 所需要的内容直接组织好, 避免在 VC 里面大段的业务代码堆砌.
     var isEmpty: Bool { return items.value.isEmpty }
     let screenTitle = NSLocalizedString("Movies", comment: "")
     let emptyDataTitle = NSLocalizedString("Search results", comment: "")
@@ -83,9 +84,9 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     let searchBarPlaceholder = NSLocalizedString("Search Movies", comment: "")
     
     // MARK: - Init
-    
-    init(searchMoviesUseCase: SearchMoviesUseCase,
-         actions: MoviesListViewModelActions? = nil) {
+    // 需要使用的接口对象, 最好是 init 的时候传递过来.
+    // 这种功能性的控件, 如果一直带着 Optinal, 使用起来会特别不方便.
+    init(searchMoviesUseCase: SearchMoviesUseCase, actions: MoviesListViewModelActions? = nil) {
         self.searchMoviesUseCase = searchMoviesUseCase
         self.actions = actions
     }
@@ -98,8 +99,10 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private func appendPage(_ moviesPage: MoviesPage) {
         currentPage = moviesPage.page
         totalPageCount = moviesPage.totalPages
-        
         pages = pages.filter { $0.page != moviesPage.page } + [moviesPage]
+        
+        // 在做完了内部的数据变化之后, 来触发信号的变化. 这样比较好, 相当于是最后一步触发给 VC 外界变化.
+        // 其实, 和使用一个闭包来传递给外界数据发生了变化, 没有太大的区别. 只是这样代码更加的集中.
         items.value = pages.movies.map(MoviesListItemViewModel.init)
     }
     
@@ -134,16 +137,16 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     // 自动触发后续的逻辑, ViewModel 中不需要专门的触发 View 的变化.
     /*
      响应式编程（Reactive Programming）是一种编程范式，它主张以数据流和变化的方式来处理应用程序的输入和输出。在响应式编程中，数据流是一种主要的抽象概念，应用程序通过对数据流进行组合和变换来实现业务逻辑。
-
+     
      响应式编程的核心概念是响应式流，它是一个可以被异步推送的序列数据集合，它可以包含异步事件、异步数据或异步控制流等多种类型的数据。在响应式编程中，应用程序可以订阅响应式流，并接收它所感兴趣的数据，并可以对这些数据进行变换和组合。
-
+     
      响应式编程的主要目的是提高应用程序的响应能力和可扩展性。响应式编程可以帮助应用程序处理异步事件，同时也可以帮助应用程序处理高并发场景下的数据访问和处理。此外，响应式编程还可以帮助应用程序实现响应式界面，在用户交互时能够及时更新界面。
-
+     
      总之，响应式编程是一种以数据流和变化的方式来处理应用程序的输入和输出的编程范式，它通过处理异步事件和高并发场景等问题，提高了应用程序的响应能力和可扩展性。
      */
     // 从上面的定义我们知道, ViewModel 需要有一种机制, 来触发自己数据变化之后的 View 变化.
     // 如果暴露了各种信号对象, 那么信号对象的变化会触发后续逻辑.
-    // 否则, 也要在 ViewModel 内部触发对应的逻辑. Delegate 也好, 闭包也好, 都要主动调用. 
+    // 否则, 也要在 ViewModel 内部触发对应的逻辑. Delegate 也好, 闭包也好, 都要主动调用.
     private func handle(error: Error) {
         self.error.value = error.isInternetConnectionError ?
         NSLocalizedString("No internet connection", comment: "") :
